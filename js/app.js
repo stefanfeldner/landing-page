@@ -1,7 +1,6 @@
 /*
  * Get Existing Sections
 */
-
 const sectionsArray = Array.from(document.getElementsByTagName('section')); // find all the sections in the page
 const sectionTopOffsets = [];
 
@@ -14,12 +13,11 @@ for (let i = 0; i < sectionsArray.length; i++) {
         sectionsArray.splice(i, 1);
         i--;
     } else {
-        // get the sections offset and save it in an array
+        // get the sections top offset and save it in an array
         sectionTopOffsets.push(sectionsArray[i].offsetTop);
     }
 }
-console.log(sectionTopOffsets)
-
+//console.log(sectionTopOffsets)
 //console.log(sectionsArray);
 
 /*
@@ -48,29 +46,36 @@ sectionsArray.forEach(section => {
     addListItems(section);
 });
 
-const smoothScroll = () => {
-    // stop it from jumping
-    event.preventDefault();
-    console.log(sectionsArray.offsetTop);
-
-    // scroll smoothly to the position based on the section
-    window.scrollTo({
-        top: sectionsArray.offsetTop,
-        behavior: 'smooth'
-    });
-}
+/*
+ * create scroll functionality
+*/
 
 const menuLinkItems = Array.from(document.getElementsByClassName('scrollLink'));
 
-menuLinkItems.forEach(linkItem => {
-    linkItem.addEventListener('click', smoothScroll);
+for (let i = 0; i < menuLinkItems.length; i++) {
+    menuLinkItems[i].addEventListener('click', function() {
+        event.preventDefault();
+
+        // scroll smoothly to the position based on the section
+        window.scrollTo({
+            top: sectionTopOffsets[i] -91,
+            behavior: 'smooth'
+        });
+    });
+}
+
+window.addEventListener('scroll', function() {
+    for (section of sectionsArray) {
+        if (section.offsetTop < window.innerHeight) {
+            console.log('ey');
+            section.classList.add('active');
+        }
+    }
 });
 
 // Add class 'active' to section when near top of viewport
 
-
-// Scroll to anchor ID using scrollTO event
-
+// TODO: add active to item i scrolled to
 
 /*
  * End Main Functions
@@ -84,3 +89,8 @@ menuLinkItems.forEach(linkItem => {
 // Set sections as active
 
 
+/*let t1 = performance.now();
+
+let t2 = performance.now();
+console.log((t1 - t2).toFixed(2));
+*/
