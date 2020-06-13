@@ -1,31 +1,9 @@
-/**
- * 
- * Manipulating the DOM exercise.
- * Exercise programmatically builds navigation,
- * scrolls to anchors from navigation,
- * and highlights section in viewport upon scrolling.
- * 
- * Dependencies: None
- * 
- * JS Version: ES2015/ES6
- * 
- * JS Standard: ESlint
- * 
-*/
-
-
-
-/*
- * Define Global Variables
-*/
-
-
-
 /*
  * Get Existing Sections
 */
 
 const sectionsArray = Array.from(document.getElementsByTagName('section')); // find all the sections in the page
+const sectionTopOffsets = [];
 
 // loop through the sections and check the ID
 for (let i = 0; i < sectionsArray.length; i++) {
@@ -35,16 +13,20 @@ for (let i = 0; i < sectionsArray.length; i++) {
     if (!sectionID.includes('section')) {
         sectionsArray.splice(i, 1);
         i--;
+    } else {
+        // get the sections offset and save it in an array
+        sectionTopOffsets.push(sectionsArray[i].offsetTop);
     }
 }
-console.log(sectionsArray);
+console.log(sectionTopOffsets)
+
+//console.log(sectionsArray);
 
 /*
  * create menu list items
 */
 
 // get the menu ul
-
 const menuContainer = document.getElementById('navbar__list');
 
 const addListItems = (section) => {
@@ -54,6 +36,7 @@ const addListItems = (section) => {
     
     // then set the needed text and link attributes
     menuLinkItem.setAttribute('href', '#' + section.id)
+    menuLinkItem.classList.add('scrollLink');
     menuLinkItem.textContent = section.id;
     
     // and then append them to the existing ul
@@ -65,6 +48,23 @@ sectionsArray.forEach(section => {
     addListItems(section);
 });
 
+const smoothScroll = () => {
+    // stop it from jumping
+    event.preventDefault();
+    console.log(sectionsArray.offsetTop);
+
+    // scroll smoothly to the position based on the section
+    window.scrollTo({
+        top: sectionsArray.offsetTop,
+        behavior: 'smooth'
+    });
+}
+
+const menuLinkItems = Array.from(document.getElementsByClassName('scrollLink'));
+
+menuLinkItems.forEach(linkItem => {
+    linkItem.addEventListener('click', smoothScroll);
+});
 
 // Add class 'active' to section when near top of viewport
 
