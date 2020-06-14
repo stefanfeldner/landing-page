@@ -50,47 +50,72 @@ sectionsArray.forEach(section => {
  * create scroll functionality
 */
 
+// get all the links with the class 'scrollLink'
 const menuLinkItems = Array.from(document.getElementsByClassName('scrollLink'));
+// get the height of the header
+const headerHeight = document.querySelector('.page__header').clientHeight;
 
+// add an event listener to every menu item and block default event
 for (let i = 0; i < menuLinkItems.length; i++) {
     menuLinkItems[i].addEventListener('click', function() {
         event.preventDefault();
 
         // scroll smoothly to the position based on the section
         window.scrollTo({
-            top: sectionTopOffsets[i] -91,
+            top: sectionTopOffsets[i] - headerHeight,
             behavior: 'smooth'
         });
     });
 }
 
+/*
+ * add section highlighting on sroll
+*/
+
 window.addEventListener('scroll', function() {
-    for (section of sectionsArray) {
-        if (section.offsetTop < window.innerHeight) {
-            console.log('ey');
+    // check for each section if they are in viewport
+    for ([i, section] of sectionsArray.entries()) {
+        let windowBounding = section.getBoundingClientRect();
+        // if in viewport add the class, else remove it
+        if (windowBounding.top <= headerHeight && windowBounding.left >= 0) {
             section.classList.add('active');
+        } else {
+            section.classList.remove('active');
         }
+        // add menu li active when in viewport and remove it when it scrolls out of the section
+        if (windowBounding.top <= headerHeight && windowBounding.bottom >= headerHeight) {
+            menuLinkItems[i].classList.add('navbar_active');
+        } else {
+            menuLinkItems[i].classList.remove('navbar_active');
+        }
+    }
+    // get the window top offset and show the topLink when the offset is higher then a wanted value
+    const windowTopOffset = window.scrollY;
+    const neededOffsetToShow = 100;
+
+    if (windowTopOffset > neededOffsetToShow) {
+        topLinkElem.style.visibility = 'visible';
+    } else {
+        topLinkElem.style.visibility = 'hidden';
     }
 });
 
-// Add class 'active' to section when near top of viewport
-
-// TODO: add active to item i scrolled to
-
 /*
- * End Main Functions
- * Begin Events
+ * scroll to top on click on topLink
 */
 
-// Build menu 
+const topLinkElem = document.getElementById('topLink');
 
-// Scroll to section on link click
+topLinkElem.addEventListener('click', function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
 
-// Set sections as active
+/*
+    let t1 = performance.now();
 
-
-/*let t1 = performance.now();
-
-let t2 = performance.now();
-console.log((t1 - t2).toFixed(2));
+    let t2 = performance.now();
+    console.log((t1 - t2).toFixed(2));
 */
