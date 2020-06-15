@@ -1,6 +1,6 @@
 /*
  * Get Existing Sections
-*/
+ */
 const sectionsArray = Array.from(document.getElementsByTagName('section')); // find all the sections in the page
 const sectionTopOffsets = [];
 
@@ -17,29 +17,18 @@ for (let i = 0; i < sectionsArray.length; i++) {
         sectionTopOffsets.push(sectionsArray[i].offsetTop);
     }
 }
-//console.log(sectionTopOffsets)
-//console.log(sectionsArray);
 
 /*
  * create menu list items
-*/
+ */
 
 // get the menu ul
 const menuContainer = document.getElementById('navbar__list');
 
 const addListItems = (section) => {
-     // first create the needed elements
-    const menuListItem = document.createElement('li');
-    const menuLinkItem = document.createElement('a');
-    
-    // then set the needed text and link attributes
-    menuLinkItem.setAttribute('href', '#' + section.id)
-    menuLinkItem.classList.add('scrollLink');
-    menuLinkItem.textContent = section.id;
-    
-    // and then append them to the existing ul
-    menuContainer.appendChild(menuListItem);
-    menuListItem.appendChild(menuLinkItem);
+    // create listItem and insert it into the ul
+    const menuListItems = `<li><a class="scrollLink" href="#${section.id}">${section.id}</a></li>`;
+    menuContainer.insertAdjacentHTML('beforeend', menuListItems);
 };
 
 sectionsArray.forEach(section => {
@@ -48,29 +37,35 @@ sectionsArray.forEach(section => {
 
 /*
  * create scroll functionality
-*/
+ */
 
 // get all the links with the class 'scrollLink'
 const menuLinkItems = Array.from(document.getElementsByClassName('scrollLink'));
 // get the height of the header
 const headerHeight = document.querySelector('.page__header').clientHeight;
 
+// create scroll function with two arguments --> event and index
+const scrollFunc = (event, i) => {
+    // stop it from jumping
+    event.preventDefault();
+
+    // scroll smoothly to the position based on the section
+    window.scroll({
+        top: sectionTopOffsets[i] - headerHeight,
+        behavior: 'smooth'
+    });
+};
+
 // add an event listener to every menu item and block default event
 for (let i = 0; i < menuLinkItems.length; i++) {
     menuLinkItems[i].addEventListener('click', function() {
-        event.preventDefault();
-
-        // scroll smoothly to the position based on the section
-        window.scrollTo({
-            top: sectionTopOffsets[i] - headerHeight,
-            behavior: 'smooth'
-        });
+        scrollFunc(event, i)
     });
 }
 
 /*
- * add section highlighting on sroll
-*/
+ * add section highlighting on scroll
+ */
 
 window.addEventListener('scroll', function() {
     // check for each section if they are in viewport
@@ -102,7 +97,7 @@ window.addEventListener('scroll', function() {
 
 /*
  * scroll to top on click on topLink
-*/
+ */
 
 const topLinkElem = document.getElementById('topLink');
 
@@ -112,10 +107,3 @@ topLinkElem.addEventListener('click', function() {
         behavior: 'smooth'
     });
 });
-
-/*
-    let t1 = performance.now();
-
-    let t2 = performance.now();
-    console.log((t1 - t2).toFixed(2));
-*/
