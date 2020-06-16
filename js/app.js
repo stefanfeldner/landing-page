@@ -3,6 +3,7 @@
  */
 const sectionsArray = Array.from(document.getElementsByTagName('section')); // find all the sections in the page
 const sectionTopOffsets = [];
+const sectionOffsetHeight = [];
 
 // loop through the sections and check the ID
 for (let i = 0; i < sectionsArray.length; i++) {
@@ -15,6 +16,7 @@ for (let i = 0; i < sectionsArray.length; i++) {
     } else {
         // get the sections top offset and save it in an array
         sectionTopOffsets.push(sectionsArray[i].offsetTop);
+        sectionOffsetHeight.push(sectionsArray[i].offsetHeight);
     }
 }
 
@@ -52,6 +54,7 @@ const scrollFunc = (event, i) => {
     // scroll smoothly to the position based on the section
     window.scroll({
         top: sectionTopOffsets[i] - headerHeight,
+        left: 0,
         behavior: 'smooth'
     });
 };
@@ -70,22 +73,20 @@ for (let i = 0; i < menuLinkItems.length; i++) {
 window.addEventListener('scroll', function() {
     // check for each section if they are in viewport
     for ([i, section] of sectionsArray.entries()) {
-        let windowBounding = section.getBoundingClientRect();
-        // if in viewport add the class, else remove it
-        if (windowBounding.top <= headerHeight && windowBounding.left >= 0) {
+        // if the section is in viewport add the class, else remove it
+        const topScrollOffset = window.pageYOffset + headerHeight;
+        const bottomLimit = sectionTopOffsets[i] + sectionOffsetHeight[i] - headerHeight;
+
+        if (topScrollOffset >= sectionTopOffsets[i] && window.pageYOffset < bottomLimit) {
             section.classList.add('active');
-        } else {
-            section.classList.remove('active');
-        }
-        // add menu li active when in viewport and remove it when it scrolls out of the section
-        if (windowBounding.top <= headerHeight && windowBounding.bottom >= headerHeight) {
             menuLinkItems[i].classList.add('navbar_active');
         } else {
+            section.classList.remove('active');
             menuLinkItems[i].classList.remove('navbar_active');
         }
     }
     // get the window top offset and show the topLink when the offset is higher then a wanted value
-    const windowTopOffset = window.scrollY;
+    const windowTopOffset = window.pageYOffset;
     const neededOffsetToShow = 100;
 
     if (windowTopOffset > neededOffsetToShow) {
@@ -107,3 +108,7 @@ topLinkElem.addEventListener('click', function() {
         behavior: 'smooth'
     });
 });
+
+window.onresize = function(){ 
+    location.reload(); 
+}

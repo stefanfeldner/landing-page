@@ -273,4 +273,13 @@ section.active .landing__container::after {
     .landing__container {
         padding: 30px 20px;
     }
+    .navbar__menu ul {
+        padding: 10px 0;
+    }
+    .navbar__menu li {
+        padding: 0;
+    }
+    .navbar__menu li a {
+        font-size: .8em;
+    }
 }
