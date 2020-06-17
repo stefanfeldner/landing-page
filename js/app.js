@@ -76,10 +76,11 @@ window.addEventListener('scroll', function() {
     // check for each section if they are in viewport
     for ([i, section] of sectionsArray.entries()) {
         // if the section is in viewport add the class, else remove it
-        const topScrollOffset = window.pageYOffset + headerHeight;
+        const spacing = 200; // to highlight the section before it hits the header
+        const topScrollOffset = window.pageYOffset + headerHeight + spacing;
         const bottomLimit = sectionTopOffsets[i] + sectionOffsetHeight[i] - headerHeight;
 
-        if (topScrollOffset >= sectionTopOffsets[i] && window.pageYOffset < bottomLimit) {
+        if (topScrollOffset >= sectionTopOffsets[i] && window.pageYOffset < bottomLimit - spacing) {
             section.classList.add('active');
             menuLinkItems[i].classList.add('navbar_active');
         } else {
